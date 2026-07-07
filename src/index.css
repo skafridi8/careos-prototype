@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
+
+  /* soft blue — primary brand */
+  --color-brand-50: #f0f6fd;
+  --color-brand-100: #dbe9fa;
+  --color-brand-200: #bcd8f5;
+  --color-brand-300: #8fc0ee;
+  --color-brand-400: #5da2e2;
+  --color-brand-500: #3a84d1;
+  --color-brand-600: #2b68b0;
+  --color-brand-700: #26538e;
+  --color-brand-800: #234674;
+  --color-brand-900: #213b61;
+
+  /* soft sage green — secondary / positive */
+  --color-sage-50: #f1f7f3;
+  --color-sage-100: #dfeee3;
+  --color-sage-200: #c1ddc9;
+  --color-sage-300: #97c4a5;
+  --color-sage-400: #6da682;
+  --color-sage-500: #4f8965;
+  --color-sage-600: #3d6f51;
+  --color-sage-700: #345a43;
+  --color-sage-800: #2c4838;
+  --color-sage-900: #263c2f;
+
+  /* warm amber — attention / partial */
+  --color-amber-50: #fdf6ec;
+  --color-amber-100: #faead0;
+  --color-amber-200: #f3d3a1;
+  --color-amber-300: #ebb768;
+  --color-amber-400: #e19b3d;
+  --color-amber-500: #c97f27;
+
+  /* soft rose — risk / negative */
+  --color-rose-50: #fdf1f1;
+  --color-rose-100: #fbdfe0;
+  --color-rose-200: #f5bfc1;
+  --color-rose-300: #ea9497;
+  --color-rose-400: #dd6d70;
+  --color-rose-500: #c74d51;
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: var(--color-brand-50);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+#root {
+  min-height: 100svh;
+}
+
+* {
+  box-sizing: border-box;
+}
