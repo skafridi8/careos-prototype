@@ -1,11 +1,28 @@
 import { NavLink } from "react-router-dom";
-import { ClipboardList, CalendarClock, ShieldCheck, HeartPulse, Sparkles } from "lucide-react";
+import {
+  ClipboardList,
+  CalendarClock,
+  ShieldCheck,
+  HeartPulse,
+  Sparkles,
+  GraduationCap,
+  UserPlus,
+  Clock3,
+  Database,
+} from "lucide-react";
 
 const navItems = [
   { to: "/app/clients", label: "Care Planning", icon: ClipboardList },
   { to: "/app/ai", label: "AI Care Notes", icon: Sparkles, accent: true },
   { to: "/app/roster", label: "Rostering", icon: CalendarClock },
   { to: "/app/compliance", label: "Compliance", icon: ShieldCheck },
+];
+
+const formItems = [
+  { to: "/app/forms/training", label: "Training log", icon: GraduationCap },
+  { to: "/app/forms/client-intake", label: "New client sign-up", icon: UserPlus },
+  { to: "/app/forms/timesheet", label: "Weekly hours & pay", icon: Clock3 },
+  { to: "/app/records", label: "Records", icon: Database },
 ];
 
 export default function Sidebar() {
@@ -42,6 +59,27 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
+
+      <div>
+        <p className="mb-1 px-3 text-xs font-semibold uppercase tracking-wide text-brand-900/30">Data & forms</p>
+        <nav className="flex flex-col gap-1">
+          {formItems.map(({ to, label, icon: Icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+                  isActive ? "bg-brand-100 text-brand-800" : "text-brand-900/60 hover:bg-brand-50"
+                }`
+              }
+            >
+              <Icon size={18} />
+              {label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+
       <div className="mt-auto rounded-xl bg-sage-50 p-3 text-xs text-sage-700">
         One shared record across care planning, rostering & compliance.
       </div>

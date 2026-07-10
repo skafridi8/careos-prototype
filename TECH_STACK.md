@@ -9,14 +9,22 @@
 - **lucide-react** for icons
 - **Recharts** for charts/graphs
 
+## Backend
+- **Supabase** (Postgres + Auth) via `@supabase/supabase-js` — real auth (carer/manager roles) and 4 tables: `profiles`, `carer_training`, `client_intake`, `carer_timesheets`. Schema + row-level security policies live in `supabase/schema.sql`. Client at `src/lib/supabaseClient.js`, reading `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` from env.
+
+## Hosting
+- **Vercel** — `vercel.json` rewrites all paths to `index.html` for client-side routing.
+
 ## Tooling
 - **oxlint** (Rust-based linter) instead of ESLint — config in `.oxlintrc.json`
 
 ## App Structure (all plain `.jsx`)
-- `src/pages/web/*` — web/desktop views (Roster, Compliance, ClientList, ClientDetail, CarePlanEditor, AiAssistant)
+- `src/pages/web/*` — web/desktop views (Roster, Compliance, ClientList, ClientDetail, CarePlanEditor, AiAssistant, Records)
+- `src/pages/web/forms/*` — Supabase-backed forms (carer training log, client sign-up, weekly hours/pay)
+- `src/pages/Login.jsx` + `src/context/AuthContext.jsx` + `src/components/layout/ProtectedRoute.jsx` — Supabase Auth sign-in/sign-up and route protection
 - `src/components/mobile/*` — simulated mobile app rendered inside a `PhoneFrame` component, toggled via `ViewModeContext`
 - `src/components/roster/*` + `src/context/RosterContext.jsx` + `src/utils/rosterEngine.js` — rostering engine/state shared between web and mobile views
-- `src/data/*` — static mock/seed data (clients, carers, visits, compliance, etc.) standing in for a backend
+- `src/data/*` — static mock/seed data (clients, carers, visits, compliance, etc.) still used by Care Planning/Roster/Compliance screens
 
 ## State Management
-No backend, no state library (e.g. Redux). State is handled via React Context (`RosterContext`, `ViewModeContext`) and local component state, with `src/data/*` acting as the mock data layer.
+Care Planning/Roster/Compliance run on React Context (`RosterContext`, `ViewModeContext`) over the static `src/data/*` mock layer, unchanged. Auth/forms/records run on live Supabase data via `AuthContext` and direct `supabase-js` calls per page.
