@@ -9,7 +9,7 @@ const PLANS = [
   {
     id: "monthly",
     name: "Monthly",
-    priceLabel: "$49",
+    priceLabel: "£49",
     cadence: "/ month",
     priceId: import.meta.env.VITE_STRIPE_PRICE_MONTHLY,
     features: ["Unlimited clients & carers", "Rostering + AI Care Notes", "Compliance tracking", "Cancel anytime"],
@@ -17,7 +17,7 @@ const PLANS = [
   {
     id: "yearly",
     name: "Yearly",
-    priceLabel: "$470",
+    priceLabel: "£470",
     cadence: "/ year",
     priceId: import.meta.env.VITE_STRIPE_PRICE_YEARLY,
     features: ["Everything in Monthly", "2 months free vs. monthly", "Priority support"],
