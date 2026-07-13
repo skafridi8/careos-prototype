@@ -6,6 +6,10 @@ import AppShell from "./components/layout/AppShell";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import WhyCareOS from "./pages/WhyCareOS";
 import Login from "./pages/Login";
+import Subscribe from "./pages/Subscribe";
+import SubscribeSuccess from "./pages/SubscribeSuccess";
+import SubscribeCancel from "./pages/SubscribeCancel";
+import ChatWidget from "./components/chat/ChatWidget";
 import ClientList from "./pages/web/ClientList";
 import ClientDetail from "./pages/web/ClientDetail";
 import CarePlanEditor from "./pages/web/CarePlanEditor";
@@ -25,6 +29,9 @@ export default function App() {
           <Routes>
             <Route path="/" element={<WhyCareOS />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/subscribe" element={<Subscribe />} />
+            <Route path="/subscribe/success" element={<SubscribeSuccess />} />
+            <Route path="/subscribe/cancel" element={<SubscribeCancel />} />
             <Route element={<ProtectedRoute />}>
               <Route
                 path="/app"
@@ -49,6 +56,7 @@ export default function App() {
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          <ChatWidget />
         </ViewModeProvider>
       </AuthProvider>
     </BrowserRouter>

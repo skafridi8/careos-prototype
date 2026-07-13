@@ -118,12 +118,50 @@ create table if not exists public.carer_timesheets (
 );
 
 -- ============================================================
+-- 5. chat_logs — every message exchanged with the AI chatbot
+--    (public FAQ mode for visitors, in-app support mode for logged-in users)
+-- ============================================================
+create table if not exists public.chat_logs (
+  id uuid primary key default gen_random_uuid(),
+  session_id text not null,                -- client-generated id, used when not logged in
+  user_id uuid references public.profiles (id) on delete set null,
+  mode text not null check (mode in ('public', 'app')),
+  user_message text not null,
+  bot_response text not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists chat_logs_session_id_idx on public.chat_logs (session_id);
+create index if not exists chat_logs_user_id_idx on public.chat_logs (user_id);
+
+-- ============================================================
+-- 6. customer_subscriptions — Stripe subscription records (test mode)
+-- ============================================================
+create table if not exists public.customer_subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  company_name text,
+  email text not null,
+  stripe_customer_id text not null,
+  stripe_subscription_id text unique,
+  plan text check (plan in ('monthly', 'yearly')),
+  status text not null default 'incomplete',   -- mirrors Stripe subscription status values
+  current_period_end timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists customer_subscriptions_customer_idx on public.customer_subscriptions (stripe_customer_id);
+create index if not exists customer_subscriptions_email_idx on public.customer_subscriptions (email);
+
+-- ============================================================
 -- Row Level Security
 -- ============================================================
 alter table public.profiles enable row level security;
 alter table public.carer_training enable row level security;
 alter table public.client_intake enable row level security;
 alter table public.carer_timesheets enable row level security;
+alter table public.chat_logs enable row level security;
+alter table public.customer_subscriptions enable row level security;
 
 -- profiles
 drop policy if exists "profiles_select_own_or_manager" on public.profiles;
@@ -176,3 +214,16 @@ create policy "timesheets_insert_own" on public.carer_timesheets
 drop policy if exists "timesheets_update_own_or_manager" on public.carer_timesheets;
 create policy "timesheets_update_own_or_manager" on public.carer_timesheets
   for update using (carer_id = auth.uid() or public.is_manager());
+
+-- chat_logs — no anon/authenticated policies: all reads/writes happen server-side
+-- via the /api/chat function using the Supabase service role key, which bypasses RLS.
+-- Managers can review conversation history from the client.
+drop policy if exists "chat_logs_select_manager" on public.chat_logs;
+create policy "chat_logs_select_manager" on public.chat_logs
+  for select using (public.is_manager());
+
+-- customer_subscriptions — billing data, written only by the Stripe webhook
+-- (service role key bypasses RLS). Managers can view records from the client.
+drop policy if exists "subscriptions_select_manager" on public.customer_subscriptions;
+create policy "subscriptions_select_manager" on public.customer_subscriptions
+  for select using (public.is_manager());

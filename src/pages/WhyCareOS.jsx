@@ -107,13 +107,21 @@ export default function WhyCareOS() {
         </div>
 
         <div className="mt-12 flex flex-col items-center gap-3">
-          <Link
-            to="/app"
-            className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 text-base font-semibold text-white shadow-md transition hover:bg-brand-700"
-          >
-            Enter the prototype
-            <ArrowRight size={18} />
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              to="/app"
+              className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 text-base font-semibold text-white shadow-md transition hover:bg-brand-700"
+            >
+              Enter the prototype
+              <ArrowRight size={18} />
+            </Link>
+            <Link
+              to="/subscribe"
+              className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white px-7 py-3.5 text-base font-semibold text-brand-700 shadow-sm transition hover:bg-brand-50"
+            >
+              Subscribe
+            </Link>
+          </div>
           <span className="text-xs text-brand-900/40">
             Clickable prototype for shareholder review — sample data only, no real client information.
           </span>
