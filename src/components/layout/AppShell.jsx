@@ -3,10 +3,14 @@ import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import PhoneFrame from "./PhoneFrame";
 import MobileApp from "../mobile/MobileApp";
+import ManagerAssistant from "../chat/ManagerAssistant";
+import ChatWidget from "../chat/ChatWidget";
 import { useViewMode } from "../../context/ViewModeContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function AppShell() {
   const { viewMode } = useViewMode();
+  const { isManager } = useAuth();
   const showWeb = viewMode === "web" || viewMode === "split";
   const showMobile = viewMode === "mobile" || viewMode === "split";
 
@@ -30,6 +34,7 @@ export default function AppShell() {
           </div>
         )}
       </div>
+      {isManager ? <ManagerAssistant /> : <ChatWidget assistantMode="app" />}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ViewModeProvider } from "./context/ViewModeContext";
 import { RosterProvider } from "./context/RosterContext";
 import { AuthProvider } from "./context/AuthContext";
@@ -20,6 +20,16 @@ import Records from "./pages/web/Records";
 import TrainingForm from "./pages/web/forms/TrainingForm";
 import ClientIntakeForm from "./pages/web/forms/ClientIntakeForm";
 import TimesheetForm from "./pages/web/forms/TimesheetForm";
+import { useAuth } from "./context/AuthContext";
+
+// The in-app pages (/app/*) mount their own role-aware assistant (manager tools vs plain
+// help) inside AppShell, where RosterContext is available. This one covers everywhere else.
+function PublicChatWidget() {
+  const { pathname } = useLocation();
+  const { user } = useAuth();
+  if (pathname.startsWith("/app")) return null;
+  return <ChatWidget assistantMode={user ? "app" : "public"} />;
+}
 
 export default function App() {
   return (
@@ -56,7 +66,7 @@ export default function App() {
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-          <ChatWidget />
+          <PublicChatWidget />
         </ViewModeProvider>
       </AuthProvider>
     </BrowserRouter>

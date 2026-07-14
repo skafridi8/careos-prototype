@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, FileText, ArrowRight, Check } from "lucide-react";
+import { Sparkles, FileText, ArrowRight, Check, Smartphone } from "lucide-react";
 import { clients, clientById } from "../../data/clients";
 import { sourceNotes } from "../../data/aiCarePlanDraft";
+import { carerById } from "../../data/carers";
 import { comparisonRows, competitors } from "../../data/comparisonData";
 import { AI_FLAGSHIP_CLIENT_ID, sectionLabels, getDraftForClient } from "../../utils/carePlanDraft";
+import { useRoster } from "../../context/RosterContext";
 import Card from "../../components/ui/Card";
 import Avatar from "../../components/ui/Avatar";
 import CitationTag from "../../components/shared/CitationTag";
@@ -18,8 +20,10 @@ export default function AiAssistant() {
   const [generating, setGenerating] = useState(false);
   const [draft, setDraft] = useState(null);
   const navigate = useNavigate();
+  const { carerNotes } = useRoster();
   const client = clientById(selectedId);
   const isFlagship = selectedId === AI_FLAGSHIP_CLIENT_ID;
+  const liveNotesForClient = carerNotes.filter((n) => n.clientId === selectedId);
 
   function selectClient(id) {
     setSelectedId(id);
@@ -118,6 +122,21 @@ export default function AiAssistant() {
                 CareOS has been logging {client.preferredName}'s visit notes, medication records and welfare checks all
                 week. The AI reads all of it — click generate to turn that activity into a structured care plan draft.
               </p>
+            )}
+
+            {liveNotesForClient.length > 0 && (
+              <div className="mt-3 flex flex-col gap-2 border-t border-brand-50 pt-3">
+                <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-brand-900/40">
+                  <Smartphone size={12} /> From the mobile assistant
+                </div>
+                {liveNotesForClient.map((n) => (
+                  <div key={n.id} className="text-xs text-brand-900/60">
+                    <span className="font-medium text-brand-900/80">{carerById(n.carerId)?.name ?? "Carer"}</span>{" "}
+                    <span className="text-brand-900/40">· {formatRelativeTime(n.createdAt)}</span>
+                    <div>"{n.text}"</div>
+                  </div>
+                ))}
+              </div>
             )}
 
             <button

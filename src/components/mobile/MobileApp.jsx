@@ -5,11 +5,16 @@ import OfflineStatusBar from "./OfflineStatusBar";
 import RotaUpdateBanner from "./RotaUpdateBanner";
 import MobileToday from "./MobileToday";
 import MobileVisitDetail from "./MobileVisitDetail";
+import MobileAssistant from "./MobileAssistant";
+import MobileCompliance from "./MobileCompliance";
+import MobileRecords from "./MobileRecords";
+import MobileBottomNav from "./MobileBottomNav";
 
 export default function MobileApp() {
   const { publishedVisitsForCarer, publishBump, lastPublishedAt } = useRoster();
 
   const [activeCarerId, setActiveCarerId] = useState(carers[0].id);
+  const [tab, setTab] = useState("today");
   const [screen, setScreen] = useState("today");
   const [selectedVisitId, setSelectedVisitId] = useState(null);
   const [syncState, setSyncState] = useState("synced"); // 'synced' | 'offline' | 'syncing'
@@ -68,6 +73,7 @@ export default function MobileApp() {
   function switchCarer(id) {
     setActiveCarerId(id);
     if (!baselines.current[id]) baselines.current[id] = roundIdsFor(id);
+    setTab("today");
     setScreen("today");
     setSelectedVisitId(null);
     setHighlight(new Set());
@@ -107,32 +113,41 @@ export default function MobileApp() {
         onToggle={toggleConnection}
         lastPublishedAt={lastPublishedAt}
       />
-      {update && screen === "today" && (
+      {update && tab === "today" && screen === "today" && (
         <RotaUpdateBanner update={update} onDismiss={() => setUpdate(null)} />
       )}
-      {screen === "today" || !selectedVisit ? (
-        <MobileToday
-          carer={activeCarer}
-          carers={carers}
-          visits={round}
-          overrides={overrides}
-          highlight={highlight}
-          onSwitchCarer={switchCarer}
-          onSelectVisit={(id) => {
-            setSelectedVisitId(id);
-            setScreen("visitDetail");
-          }}
-        />
-      ) : (
-        <MobileVisitDetail
-          visit={selectedVisit}
-          status={overrides.has(selectedVisit.id) ? "completed" : selectedVisit.status}
-          isNew={highlight.has(selectedVisit.id)}
-          currentCarerId={activeCarerId}
-          onBack={() => setScreen("today")}
-          onComplete={handleComplete}
-        />
-      )}
+
+      <div className="flex-1 overflow-y-auto">
+        {tab === "today" &&
+          (screen === "today" || !selectedVisit ? (
+            <MobileToday
+              carer={activeCarer}
+              carers={carers}
+              visits={round}
+              overrides={overrides}
+              highlight={highlight}
+              onSwitchCarer={switchCarer}
+              onSelectVisit={(id) => {
+                setSelectedVisitId(id);
+                setScreen("visitDetail");
+              }}
+            />
+          ) : (
+            <MobileVisitDetail
+              visit={selectedVisit}
+              status={overrides.has(selectedVisit.id) ? "completed" : selectedVisit.status}
+              isNew={highlight.has(selectedVisit.id)}
+              currentCarerId={activeCarerId}
+              onBack={() => setScreen("today")}
+              onComplete={handleComplete}
+            />
+          ))}
+        {tab === "assistant" && <MobileAssistant carerId={activeCarerId} todaysVisits={round} />}
+        {tab === "compliance" && <MobileCompliance carer={activeCarer} />}
+        {tab === "records" && <MobileRecords carer={activeCarer} />}
+      </div>
+
+      <MobileBottomNav active={tab} onChange={setTab} />
     </div>
   );
 }

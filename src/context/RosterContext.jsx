@@ -22,12 +22,20 @@ const initialState = {
   changeLog: [],
   lastPublishedAt: Date.now(),
   publishBump: 0, // increments on every publish so the mobile app can react
+  carerRequests: [], // time-off / shift-swap / flagged-issue requests raised by carers (via mobile AI assistant)
+  carerNotes: [], // free-text visit notes carers submit via the mobile AI assistant, cited in AI Care Notes
+  carerTimesheets: [], // demo-only timesheet entries submitted from the mobile Records tab
+  carerTrainingLogs: [], // demo-only training-log entries submitted from the mobile Records tab
 };
 
 let logId = 0;
 function logEntry(text, tone = "brand") {
   return { id: `log-${++logId}`, text, tone };
 }
+
+let requestId = 0;
+let noteId = 0;
+let recordId = 0;
 
 // Which visits changed assignment/status between two rota snapshots.
 function changedBetween(prev, next) {
@@ -107,6 +115,51 @@ function reducer(state, action) {
         lastPublishedAt: Date.now(),
         publishBump: state.publishBump + 1,
       };
+    case "add-carer-request": {
+      const { requestType, carerId, payload } = action;
+      const request = {
+        id: `req-${++requestId}`,
+        type: requestType, // 'time-off' | 'shift-swap' | 'flag'
+        carerId,
+        payload,
+        status: "pending",
+        createdAt: Date.now(),
+      };
+      const carer = carerById(carerId);
+      const labelByType = { "time-off": "requested time off", "shift-swap": "requested a shift swap", flag: "flagged an issue" };
+      return {
+        ...state,
+        carerRequests: [request, ...state.carerRequests],
+        changeLog: [...state.changeLog, logEntry(`${carer?.name ?? "A carer"} ${labelByType[requestType] ?? "raised a request"}`, "amber")],
+      };
+    }
+    case "resolve-carer-request": {
+      const { requestId: id, resolution } = action; // resolution: 'approved' | 'declined'
+      const request = state.carerRequests.find((r) => r.id === id);
+      if (!request) return state;
+      const carer = carerById(request.carerId);
+      return {
+        ...state,
+        carerRequests: state.carerRequests.map((r) => (r.id === id ? { ...r, status: resolution } : r)),
+        changeLog: [
+          ...state.changeLog,
+          logEntry(`${carer?.name ?? "Carer"}'s request ${resolution}`, resolution === "approved" ? "sage" : "rose"),
+        ],
+      };
+    }
+    case "add-carer-note": {
+      const { carerId, clientId, visitId, text } = action;
+      const note = { id: `note-${++noteId}`, carerId, clientId, visitId, text, createdAt: Date.now() };
+      return { ...state, carerNotes: [note, ...state.carerNotes] };
+    }
+    case "add-carer-timesheet": {
+      const entry = { id: `ts-${++recordId}`, createdAt: Date.now(), ...action.entry };
+      return { ...state, carerTimesheets: [entry, ...state.carerTimesheets] };
+    }
+    case "add-carer-training-log": {
+      const entry = { id: `tr-${++recordId}`, createdAt: Date.now(), ...action.entry };
+      return { ...state, carerTrainingLogs: [entry, ...state.carerTrainingLogs] };
+    }
     case "reset":
       return { ...initialState, lastPublishedAt: Date.now(), publishBump: state.publishBump + 1 };
     default:
@@ -126,7 +179,18 @@ export function RosterProvider({ children }) {
     toastTimer.current = setTimeout(() => setToast(null), 4000);
   }, []);
 
-  const { visits, publishedVisits, sickCarerIds, changeLog, lastPublishedAt, publishBump } = state;
+  const {
+    visits,
+    publishedVisits,
+    sickCarerIds,
+    changeLog,
+    lastPublishedAt,
+    publishBump,
+    carerRequests,
+    carerNotes,
+    carerTimesheets,
+    carerTrainingLogs,
+  } = state;
 
   // What still differs between the office's working copy and the carers' phones.
   const pendingPublish = useMemo(
@@ -191,6 +255,16 @@ export function RosterProvider({ children }) {
         setSelectedVisitId(null);
         showToast("Demo reset — rota restored to the published week", "brand");
       },
+      carerRequests,
+      pendingCarerRequests: carerRequests.filter((r) => r.status === "pending").length,
+      addCarerRequest: (requestType, carerId, payload = {}) => dispatch({ type: "add-carer-request", requestType, carerId, payload }),
+      resolveCarerRequest: (requestId, resolution) => dispatch({ type: "resolve-carer-request", requestId, resolution }),
+      carerNotes,
+      addCarerNote: (carerId, clientId, visitId, text) => dispatch({ type: "add-carer-note", carerId, clientId, visitId, text }),
+      carerTimesheets,
+      addCarerTimesheet: (entry) => dispatch({ type: "add-carer-timesheet", entry }),
+      carerTrainingLogs,
+      addCarerTrainingLog: (entry) => dispatch({ type: "add-carer-training-log", entry }),
     }),
     [
       visits,
@@ -207,6 +281,10 @@ export function RosterProvider({ children }) {
       toast,
       showToast,
       autoAllocate,
+      carerRequests,
+      carerNotes,
+      carerTimesheets,
+      carerTrainingLogs,
     ],
   );
 

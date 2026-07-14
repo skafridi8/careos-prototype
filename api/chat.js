@@ -46,8 +46,237 @@ const PUBLIC_MODE_ADDENDUM = `
 The current visitor is a public, logged-out visitor to the marketing site. Focus on explaining CareOS, its
 features, and directing them to sign up or the Subscribe page for pricing.`;
 
+const MANAGER_MODE_ADDENDUM = `
+You are now acting as the CareOS ROSTERING & OPERATIONS ASSISTANT for a care coordinator/manager who is looking
+at the live Roster screen. You are not just answering questions — you can actually carry out rostering tasks and
+draft communications for them by calling the tools available to you.
+
+Rules for this mode:
+- The tool_context JSON below is a live snapshot of the current rota, carers, and open carer requests. Use it to
+  resolve names to ids — never invent an id that isn't in the snapshot.
+- When the manager asks you to do something that matches a tool (assign/reassign/unassign a carer, mark someone
+  sick/fit, auto-allocate unfilled visits, publish the rota, approve/decline a carer request, or draft a message),
+  call the tool. Do not just describe what you would do — call it.
+- If a request is ambiguous (e.g. which visit, which carer) ask a short clarifying question instead of guessing.
+- After a tool result comes back, summarize what happened in one or two plain-English sentences.
+- For drafting emails/messages/announcements, use draft_message — it does not send anything, it only returns text
+  for the manager to review, so you can draft freely.
+- Keep replies concise and operational; this is a working tool, not a marketing chat.`;
+
+const CARER_MODE_ADDENDUM = `
+You are now acting as the CareOS FIELD ASSISTANT for a carer using the mobile app. You can help them understand
+today's visits and the client's care plan, turn a spoken/typed visit note into a structured note for the office,
+and raise requests (time off, a shift swap, or flagging an issue) on their behalf using the tools available.
+
+Rules for this mode:
+- The tool_context JSON below is a snapshot of this carer's identity and today's visits. Only act on this carer's
+  own visits/requests.
+- When the carer describes what happened on a visit and wants it logged, call submit_visit_note.
+- When the carer asks for time off, a shift swap, or wants to flag a problem, call the matching tool. Confirm key
+  details (dates, which visit) if they're missing before calling it.
+- After a tool result, reply with a short, warm confirmation (1-2 sentences) — this is a mobile chat, keep it brief.
+- You cannot change the rota yourself (no assign/publish tools here) — that's the office's job; requests just get
+  sent to them.`;
+
+const MANAGER_TOOLS = [
+  {
+    type: "function",
+    function: {
+      name: "assign_carer",
+      description: "Assign (or reassign) a carer to a visit.",
+      parameters: {
+        type: "object",
+        properties: {
+          visitId: { type: "string", description: "id of the visit from tool_context.visits" },
+          carerId: { type: "string", description: "id of the carer from tool_context.carers" },
+          replaceCarerId: { type: "string", description: "id of a carer currently on the visit being replaced, if reassigning" },
+        },
+        required: ["visitId", "carerId"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "unassign_carer",
+      description: "Remove a carer from a visit.",
+      parameters: {
+        type: "object",
+        properties: {
+          visitId: { type: "string" },
+          carerId: { type: "string" },
+        },
+        required: ["visitId", "carerId"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "mark_carer_sick",
+      description: "Mark a carer off sick, freeing up their upcoming visits for reallocation.",
+      parameters: {
+        type: "object",
+        properties: { carerId: { type: "string" } },
+        required: ["carerId"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "mark_carer_fit",
+      description: "Mark a previously sick carer as fit for work again.",
+      parameters: {
+        type: "object",
+        properties: { carerId: { type: "string" } },
+        required: ["carerId"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "auto_allocate",
+      description: "Run the AI auto-allocator to fill every currently unallocated visit with the best conflict-free carer.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "publish_roster",
+      description: "Publish the current working rota so every carer's mobile app updates to match it.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "resolve_carer_request",
+      description: "Approve or decline a pending carer request (time off, shift swap, or flagged issue).",
+      parameters: {
+        type: "object",
+        properties: {
+          requestId: { type: "string", description: "id from tool_context.carerRequests" },
+          resolution: { type: "string", enum: ["approved", "declined"] },
+        },
+        required: ["requestId", "resolution"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "draft_message",
+      description:
+        "Draft a message/email/announcement (e.g. to a carer, a client's family, or the whole team). Returns text only — never sent automatically.",
+      parameters: {
+        type: "object",
+        properties: {
+          audience: { type: "string", description: "who this is for, e.g. 'Aaron Mitchell' or 'all carers'" },
+          subject: { type: "string" },
+          body: { type: "string" },
+        },
+        required: ["audience", "subject", "body"],
+      },
+    },
+  },
+];
+
+const CARER_TOOLS = [
+  {
+    type: "function",
+    function: {
+      name: "submit_visit_note",
+      description: "Log a structured note for a visit, sent to the office and cited in AI Care Notes.",
+      parameters: {
+        type: "object",
+        properties: {
+          visitId: { type: "string", description: "id from tool_context.visits" },
+          note: { type: "string", description: "the note text, cleaned up into clear sentences" },
+        },
+        required: ["visitId", "note"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "request_time_off",
+      description: "Request time off for one or more dates.",
+      parameters: {
+        type: "object",
+        properties: {
+          dates: { type: "string", description: "human-readable date or date range, e.g. '12-14 August'" },
+          reason: { type: "string" },
+        },
+        required: ["dates"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "request_shift_swap",
+      description: "Ask the office to swap or cover a specific visit.",
+      parameters: {
+        type: "object",
+        properties: {
+          visitId: { type: "string", description: "id from tool_context.visits" },
+          reason: { type: "string" },
+        },
+        required: ["visitId"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "flag_issue",
+      description: "Flag a problem or concern to the office, optionally tied to a specific visit.",
+      parameters: {
+        type: "object",
+        properties: {
+          visitId: { type: "string" },
+          description: { type: "string" },
+        },
+        required: ["description"],
+      },
+    },
+  },
+];
+
 function corsHeaders(res) {
   res.setHeader("Content-Type", "application/json");
+}
+
+function buildSystemPrompt(mode, toolContext) {
+  let prompt = CAREOS_SYSTEM_PROMPT;
+  if (mode === "manager") prompt += MANAGER_MODE_ADDENDUM;
+  else if (mode === "carer") prompt += CARER_MODE_ADDENDUM;
+  else if (mode === "app") prompt += APP_MODE_ADDENDUM;
+  else prompt += PUBLIC_MODE_ADDENDUM;
+
+  if ((mode === "manager" || mode === "carer") && toolContext) {
+    prompt += `\n\ntool_context (live app state, JSON):\n${JSON.stringify(toolContext).slice(0, 6000)}`;
+  }
+  return prompt;
+}
+
+function sanitizeHistoryMessage(m) {
+  if (!m || typeof m !== "object") return null;
+  if (m.role === "user" || m.role === "assistant") {
+    if (m.tool_calls) {
+      return { role: "assistant", content: m.content ?? null, tool_calls: m.tool_calls };
+    }
+    if (typeof m.content !== "string") return null;
+    return { role: m.role, content: m.content };
+  }
+  if (m.role === "tool" && typeof m.tool_call_id === "string") {
+    return { role: "tool", tool_call_id: m.tool_call_id, content: String(m.content ?? "") };
+  }
+  return null;
 }
 
 export default async function handler(req, res) {
@@ -58,10 +287,12 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { message, history = [], sessionId } = req.body || {};
+  const { message, history = [], sessionId, assistantMode, context: toolContext, toolResults } = req.body || {};
 
-  if (!message || typeof message !== "string" || !message.trim()) {
-    res.status(400).json({ error: "message is required" });
+  const hasMessage = typeof message === "string" && message.trim();
+  const hasToolResults = Array.isArray(toolResults) && toolResults.length > 0;
+  if (!hasMessage && !hasToolResults) {
+    res.status(400).json({ error: "message or toolResults is required" });
     return;
   }
   if (!sessionId || typeof sessionId !== "string") {
@@ -81,7 +312,11 @@ export default async function handler(req, res) {
       userId = data.user.id;
     }
   }
-  const mode = userId ? "app" : "public";
+
+  // Tool-enabled modes require a logged-in user; anything else falls back to plain Q&A.
+  const wantsTools = assistantMode === "manager" || assistantMode === "carer";
+  const mode = userId ? (wantsTools ? assistantMode : "app") : "public";
+  const tools = mode === "manager" ? MANAGER_TOOLS : mode === "carer" ? CARER_TOOLS : null;
 
   const groqApiKey = process.env.GROQ_API_KEY;
   if (!groqApiKey) {
@@ -95,14 +330,18 @@ export default async function handler(req, res) {
   }
 
   const messages = [
-    { role: "system", content: CAREOS_SYSTEM_PROMPT + (mode === "app" ? APP_MODE_ADDENDUM : PUBLIC_MODE_ADDENDUM) },
-    ...history
-      .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
-      .slice(-10),
-    { role: "user", content: message.trim() },
+    { role: "system", content: buildSystemPrompt(mode, toolContext) },
+    ...history.map(sanitizeHistoryMessage).filter(Boolean).slice(-14),
+    ...(hasMessage ? [{ role: "user", content: message.trim() }] : []),
+    ...(hasToolResults
+      ? toolResults
+          .filter((t) => t && typeof t.tool_call_id === "string")
+          .map((t) => ({ role: "tool", tool_call_id: t.tool_call_id, content: String(t.content ?? "") }))
+      : []),
   ];
 
-  let reply;
+  let reply = null;
+  let toolCalls = null;
   try {
     const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -114,7 +353,8 @@ export default async function handler(req, res) {
         model: GROQ_MODEL,
         messages,
         temperature: 0.4,
-        max_tokens: 400,
+        max_tokens: 500,
+        ...(tools ? { tools, tool_choice: "auto" } : {}),
       }),
     });
 
@@ -125,9 +365,25 @@ export default async function handler(req, res) {
         "Sorry, I'm having trouble reaching the assistant right now. Please try again in a moment.";
     } else {
       const data = await groqRes.json();
-      reply = data.choices?.[0]?.message?.content?.trim();
-      if (!reply) {
-        reply = "Sorry, I didn't quite catch that. Could you rephrase your question?";
+      const choice = data.choices?.[0]?.message;
+      if (choice?.tool_calls?.length) {
+        toolCalls = choice.tool_calls.map((tc) => ({
+          id: tc.id,
+          name: tc.function?.name,
+          arguments: (() => {
+            try {
+              return JSON.parse(tc.function?.arguments || "{}");
+            } catch {
+              return {};
+            }
+          })(),
+        }));
+        reply = choice.content?.trim() || null;
+      } else {
+        reply = choice?.content?.trim();
+        if (!reply) {
+          reply = "Sorry, I didn't quite catch that. Could you rephrase your question?";
+        }
       }
     }
   } catch (err) {
@@ -140,12 +396,12 @@ export default async function handler(req, res) {
       session_id: sessionId,
       user_id: userId,
       mode,
-      user_message: message.trim(),
-      bot_response: reply,
+      user_message: hasMessage ? message.trim() : "[tool result]",
+      bot_response: reply ?? (toolCalls ? `[tool_calls] ${toolCalls.map((t) => t.name).join(", ")}` : ""),
     });
   } catch (err) {
     console.error("Failed to log chat message", err);
   }
 
-  res.status(200).json({ reply, mode });
+  res.status(200).json({ reply, mode, toolCalls });
 }

@@ -13,6 +13,7 @@ import WeekCalendar from "../../components/roster/WeekCalendar";
 import VisitDrawer from "../../components/roster/VisitDrawer";
 import PublishBar from "../../components/roster/PublishBar";
 import Toast from "../../components/roster/Toast";
+import CarerRequestsPanel from "../../components/roster/CarerRequestsPanel";
 import { formatDayLabel, formatTime } from "../../utils/dates";
 
 const views = [
@@ -226,6 +227,7 @@ export default function Roster() {
 
       <RosterKpis />
       <AttentionPanel />
+      <CarerRequestsPanel />
 
       {view === "day" && <DayTimeline />}
       {view === "week" && <WeekCalendar />}
