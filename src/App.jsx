@@ -4,6 +4,7 @@ import { RosterProvider } from "./context/RosterContext";
 import { AuthProvider } from "./context/AuthContext";
 import AppShell from "./components/layout/AppShell";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
+import RequireManager from "./components/layout/RequireManager";
 import WhyCareOS from "./pages/WhyCareOS";
 import Login from "./pages/Login";
 import Subscribe from "./pages/Subscribe";
@@ -31,6 +32,12 @@ function PublicChatWidget() {
   return <ChatWidget assistantMode={user ? "app" : "public"} />;
 }
 
+// Managers land on Care Planning; carers don't have access to that page, so send them to Compliance.
+function AppIndexRedirect() {
+  const { isManager } = useAuth();
+  return <Navigate to={isManager ? "clients" : "compliance"} replace />;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -51,16 +58,18 @@ export default function App() {
                   </RosterProvider>
                 }
               >
-                <Route index element={<Navigate to="clients" replace />} />
-                <Route path="clients" element={<ClientList />} />
-                <Route path="clients/:clientId" element={<ClientDetail />} />
-                <Route path="clients/:clientId/care-plan" element={<CarePlanEditor />} />
-                <Route path="ai" element={<AiAssistant />} />
-                <Route path="roster" element={<Roster />} />
+                <Route index element={<AppIndexRedirect />} />
+                <Route element={<RequireManager />}>
+                  <Route path="clients" element={<ClientList />} />
+                  <Route path="clients/:clientId" element={<ClientDetail />} />
+                  <Route path="clients/:clientId/care-plan" element={<CarePlanEditor />} />
+                  <Route path="ai" element={<AiAssistant />} />
+                  <Route path="roster" element={<Roster />} />
+                  <Route path="forms/client-intake" element={<ClientIntakeForm />} />
+                </Route>
                 <Route path="compliance" element={<Compliance />} />
                 <Route path="records" element={<Records />} />
                 <Route path="forms/training" element={<TrainingForm />} />
-                <Route path="forms/client-intake" element={<ClientIntakeForm />} />
                 <Route path="forms/timesheet" element={<TimesheetForm />} />
               </Route>
             </Route>

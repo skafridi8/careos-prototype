@@ -3,9 +3,13 @@ import { ShieldCheck } from "lucide-react";
 import { complianceStats } from "../../data/compliance";
 import { visits, isSameDate } from "../../data/visits";
 import { clients } from "../../data/clients";
-import { startOfWeek, addDays } from "../../utils/dates";
+import { currentCarer } from "../../data/carers";
+import { trainingForCarer, trainingStatusMeta } from "../../data/carerTraining";
+import { startOfWeek, addDays, formatDate } from "../../utils/dates";
+import { useAuth } from "../../context/AuthContext";
 import Card from "../../components/ui/Card";
 import StatCard from "../../components/ui/StatCard";
+import Badge from "../../components/ui/Badge";
 import ActivityFeed from "../../components/compliance/ActivityFeed";
 import AlertsPanel from "../../components/compliance/AlertsPanel";
 import { CheckCircle2, Pill, AlertTriangle, XCircle } from "lucide-react";
@@ -30,9 +34,68 @@ function buildChartData() {
   });
 }
 
+function MyCompliance() {
+  const certs = trainingForCarer(currentCarer.id);
+  const overdue = certs.filter((c) => c.status === "overdue").length;
+  const dueSoon = certs.filter((c) => c.status === "due-soon").length;
+
+  return (
+    <div className="flex flex-col gap-5">
+      <div>
+        <div className="flex items-center gap-2">
+          <ShieldCheck size={20} className="text-sage-600" />
+          <h1 className="text-2xl font-semibold text-brand-950">My Compliance</h1>
+        </div>
+        <p className="mt-2 max-w-2xl text-sm text-brand-900/50">
+          {overdue > 0
+            ? `${overdue} certificate${overdue === 1 ? "" : "s"} overdue — contact the office to book renewal.`
+            : dueSoon > 0
+              ? `${dueSoon} certificate${dueSoon === 1 ? "" : "s"} due soon.`
+              : "All your certifications are up to date."}
+        </p>
+      </div>
+
+      <Card padded={false} className="overflow-hidden">
+        <table className="w-full border-collapse">
+          <thead className="border-b border-brand-100">
+            <tr>
+              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-brand-900/40">
+                Certificate
+              </th>
+              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-brand-900/40">
+                Expiry
+              </th>
+              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-brand-900/40">
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-brand-50">
+            {certs.map((cert) => {
+              const meta = trainingStatusMeta[cert.status];
+              return (
+                <tr key={cert.id}>
+                  <td className="px-3 py-2.5 text-sm text-brand-950">{cert.label}</td>
+                  <td className="px-3 py-2.5 text-sm text-brand-900/60">{formatDate(cert.expiry)}</td>
+                  <td className="px-3 py-2.5">
+                    <Badge color={meta.color}>{meta.label}</Badge>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </Card>
+    </div>
+  );
+}
+
 export default function Compliance() {
+  const { isManager } = useAuth();
   const chartData = buildChartData();
   const syncedCount = clients.filter((c) => c.gpConnect?.synced).length;
+
+  if (!isManager) return <MyCompliance />;
 
   return (
     <div className="flex flex-col gap-5">

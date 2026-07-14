@@ -5,6 +5,7 @@ import PhoneFrame from "./PhoneFrame";
 import MobileApp from "../mobile/MobileApp";
 import ManagerAssistant from "../chat/ManagerAssistant";
 import ChatWidget from "../chat/ChatWidget";
+import Toast from "../roster/Toast";
 import { useViewMode } from "../../context/ViewModeContext";
 import { useAuth } from "../../context/AuthContext";
 
@@ -35,6 +36,7 @@ export default function AppShell() {
         )}
       </div>
       {isManager ? <ManagerAssistant /> : <ChatWidget assistantMode="app" />}
+      {isManager && showWeb && <Toast />}
     </div>
   );
 }

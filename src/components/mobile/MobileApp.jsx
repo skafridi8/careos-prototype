@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { carers } from "../../data/carers";
 import { useRoster } from "../../context/RosterContext";
 import OfflineStatusBar from "./OfflineStatusBar";
+import MobileNotificationsPanel, { MobileNotificationsBell } from "./MobileNotifications";
 import RotaUpdateBanner from "./RotaUpdateBanner";
 import MobileToday from "./MobileToday";
 import MobileVisitDetail from "./MobileVisitDetail";
@@ -11,10 +12,11 @@ import MobileRecords from "./MobileRecords";
 import MobileBottomNav from "./MobileBottomNav";
 
 export default function MobileApp() {
-  const { publishedVisitsForCarer, publishBump, lastPublishedAt } = useRoster();
+  const { publishedVisitsForCarer, publishBump, lastPublishedAt, markNotificationsRead } = useRoster();
 
   const [activeCarerId, setActiveCarerId] = useState(carers[0].id);
   const [tab, setTab] = useState("today");
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [screen, setScreen] = useState("today");
   const [selectedVisitId, setSelectedVisitId] = useState(null);
   const [syncState, setSyncState] = useState("synced"); // 'synced' | 'offline' | 'syncing'
@@ -78,6 +80,14 @@ export default function MobileApp() {
     setSelectedVisitId(null);
     setHighlight(new Set());
     setUpdate(null);
+    setNotificationsOpen(false);
+  }
+
+  function toggleNotifications() {
+    setNotificationsOpen((open) => {
+      if (!open) markNotificationsRead(activeCarerId);
+      return !open;
+    });
   }
 
   function toggleConnection() {
@@ -107,12 +117,20 @@ export default function MobileApp() {
 
   return (
     <div className="flex h-full flex-col">
-      <OfflineStatusBar
-        syncState={syncState}
-        pendingChanges={pendingChanges}
-        onToggle={toggleConnection}
-        lastPublishedAt={lastPublishedAt}
-      />
+      <div className="relative">
+        <OfflineStatusBar
+          syncState={syncState}
+          pendingChanges={pendingChanges}
+          onToggle={toggleConnection}
+          lastPublishedAt={lastPublishedAt}
+        />
+        <div className="absolute right-1.5 top-1 z-20">
+          <MobileNotificationsBell carerId={activeCarerId} open={notificationsOpen} onToggle={toggleNotifications} />
+        </div>
+      </div>
+      {notificationsOpen && (
+        <MobileNotificationsPanel carerId={activeCarerId} onClose={() => setNotificationsOpen(false)} />
+      )}
       {update && tab === "today" && screen === "today" && (
         <RotaUpdateBanner update={update} onDismiss={() => setUpdate(null)} />
       )}

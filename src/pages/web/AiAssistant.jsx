@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sparkles, FileText, ArrowRight, Check, Smartphone } from "lucide-react";
 import { clients, clientById } from "../../data/clients";
@@ -20,10 +20,15 @@ export default function AiAssistant() {
   const [generating, setGenerating] = useState(false);
   const [draft, setDraft] = useState(null);
   const navigate = useNavigate();
-  const { carerNotes } = useRoster();
+  const { carerNotes, markCarerNotesSeen } = useRoster();
   const client = clientById(selectedId);
   const isFlagship = selectedId === AI_FLAGSHIP_CLIENT_ID;
   const liveNotesForClient = carerNotes.filter((n) => n.clientId === selectedId);
+
+  useEffect(() => {
+    markCarerNotesSeen();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function selectClient(id) {
     setSelectedId(id);

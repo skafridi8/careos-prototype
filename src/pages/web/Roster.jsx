@@ -12,7 +12,6 @@ import DayTimeline from "../../components/roster/DayTimeline";
 import WeekCalendar from "../../components/roster/WeekCalendar";
 import VisitDrawer from "../../components/roster/VisitDrawer";
 import PublishBar from "../../components/roster/PublishBar";
-import Toast from "../../components/roster/Toast";
 import CarerRequestsPanel from "../../components/roster/CarerRequestsPanel";
 import { formatDayLabel, formatTime } from "../../utils/dates";
 
@@ -235,7 +234,6 @@ export default function Roster() {
 
       <PublishBar />
       <VisitDrawer />
-      <Toast />
     </div>
   );
 }
