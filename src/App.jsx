@@ -21,6 +21,7 @@ import Records from "./pages/web/Records";
 import TrainingForm from "./pages/web/forms/TrainingForm";
 import ClientIntakeForm from "./pages/web/forms/ClientIntakeForm";
 import TimesheetForm from "./pages/web/forms/TimesheetForm";
+import FamilyPortal from "./pages/family/FamilyPortal";
 import { useAuth } from "./context/AuthContext";
 
 // The in-app pages (/app/*) mount their own role-aware assistant (manager tools vs plain
@@ -32,10 +33,21 @@ function PublicChatWidget() {
   return <ChatWidget assistantMode={user ? "app" : "public"} />;
 }
 
-// Managers land on Care Planning; carers don't have access to that page, so send them to Compliance.
+// Managers land on Care Planning; carers don't have access to that page, so send them to
+// Compliance; family accounts belong in their own portal, not the staff app.
 function AppIndexRedirect() {
-  const { isManager } = useAuth();
+  const { isManager, isFamily, profile } = useAuth();
+  if (!profile) return null;
+  if (isFamily) return <Navigate to="/family" replace />;
   return <Navigate to={isManager ? "clients" : "compliance"} replace />;
+}
+
+// The family portal is only for linked family accounts; staff get sent back to the app.
+function FamilyRoute() {
+  const { isFamily, profileLoading, profile } = useAuth();
+  if (profileLoading || !profile) return null;
+  if (!isFamily) return <Navigate to="/app" replace />;
+  return <FamilyPortal />;
 }
 
 export default function App() {
@@ -50,6 +62,7 @@ export default function App() {
             <Route path="/subscribe/success" element={<SubscribeSuccess />} />
             <Route path="/subscribe/cancel" element={<SubscribeCancel />} />
             <Route element={<ProtectedRoute />}>
+              <Route path="/family" element={<FamilyRoute />} />
               <Route
                 path="/app"
                 element={

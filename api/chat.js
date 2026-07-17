@@ -61,6 +61,9 @@ Rules for this mode:
 - After a tool result comes back, summarize what happened in one or two plain-English sentences.
 - For drafting emails/messages/announcements, use draft_message — it does not send anything, it only returns text
   for the manager to review, so you can draft freely.
+- For ANY question about a client's risk flags, AI insights, risk score, or recent care notes, ALWAYS call
+  query_care_data first and answer from its result — never from memory. The result comes from the live CareOS
+  database. If it returns nothing, say so plainly.
 - Keep replies concise and operational; this is a working tool, not a marketing chat.`;
 
 const CARER_MODE_ADDENDUM = `
@@ -75,10 +78,41 @@ Rules for this mode:
 - When the carer asks for time off, a shift swap, or wants to flag a problem, call the matching tool. Confirm key
   details (dates, which visit) if they're missing before calling it.
 - After a tool result, reply with a short, warm confirmation (1-2 sentences) — this is a mobile chat, keep it brief.
+- If the carer asks about a client's risk flags, current concerns, or what recent notes say, call query_care_data
+  and answer from its result — it reads the live database, scoped to what this carer is allowed to see.
 - You cannot change the rota yourself (no assign/publish tools here) — that's the office's job; requests just get
   sent to them.`;
 
+// Read-only lookup of live care data (care_insights, risk_scores, care_notes in
+// Supabase). Executed client-side with the logged-in user's own session, so RLS
+// limits results to what that user's role may see. Available in both staff modes.
+const QUERY_CARE_DATA_TOOL = {
+  type: "function",
+  function: {
+    name: "query_care_data",
+    description:
+      "Read live care data from the CareOS database: the all-client risk overview, one client's open AI risk insights + risk score, or one client's recent care notes. Always use this before answering questions about risks, insights, scores, or notes.",
+    parameters: {
+      type: "object",
+      properties: {
+        query_type: {
+          type: "string",
+          enum: ["risk_overview", "client_insights", "recent_notes"],
+          description:
+            "risk_overview = every client's risk score; client_insights = one client's open insights and score; recent_notes = one client's latest care notes",
+        },
+        clientId: {
+          type: "string",
+          description: "client id from tool_context (required for client_insights and recent_notes)",
+        },
+      },
+      required: ["query_type"],
+    },
+  },
+};
+
 const MANAGER_TOOLS = [
+  QUERY_CARE_DATA_TOOL,
   {
     type: "function",
     function: {
@@ -185,6 +219,7 @@ const MANAGER_TOOLS = [
 ];
 
 const CARER_TOOLS = [
+  QUERY_CARE_DATA_TOOL,
   {
     type: "function",
     function: {

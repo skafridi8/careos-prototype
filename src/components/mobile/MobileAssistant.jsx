@@ -3,6 +3,7 @@ import { useRoster } from "../../context/RosterContext";
 import { carerById } from "../../data/carers";
 import { clientById } from "../../data/clients";
 import { formatDayLabel, formatTime } from "../../utils/dates";
+import { executeCareDataQuery } from "../../lib/careData";
 import ChatWidget from "../chat/ChatWidget";
 
 function describeToolCall(toolCall, visits) {
@@ -20,6 +21,8 @@ function describeToolCall(toolCall, visits) {
       }?`;
     case "flag_issue":
       return `Flag this to the office${clientName ? ` (${clientName})` : ""}: "${a.description}"?`;
+    case "query_care_data":
+      return "Look up live care data from the CareOS database?";
     default:
       return `Run ${toolCall.name.replaceAll("_", " ")}?`;
   }
@@ -70,6 +73,9 @@ export default function MobileAssistant({ carerId, todaysVisits }) {
           roster.addCarerRequest("flag", carer.id, { visitId: a.visitId, description: a.description, summary });
           return "Flagged to the office.";
         }
+        case "query_care_data": {
+          return await executeCareDataQuery(a, { clientNameById: (id) => clientById(id)?.name });
+        }
         default:
           throw new Error(`Unknown tool: ${toolCall.name}`);
       }
@@ -86,6 +92,7 @@ export default function MobileAssistant({ carerId, todaysVisits }) {
       placeholder="e.g. 'Log a note for Margaret's visit'"
       getContext={getContext}
       onExecuteTool={onExecuteTool}
+      autoResolveTool={(name) => name === "query_care_data"}
       describeToolCall={(tc) => describeToolCall(tc, todaysVisits)}
     />
   );

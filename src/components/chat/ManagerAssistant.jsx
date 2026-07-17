@@ -3,9 +3,10 @@ import { useRoster } from "../../context/RosterContext";
 import { carerById, carers } from "../../data/carers";
 import { clientById } from "../../data/clients";
 import { formatDayLabel, formatTime } from "../../utils/dates";
+import { executeCareDataQuery } from "../../lib/careData";
 import ChatWidget from "./ChatWidget";
 
-const AUTO_RESOLVE = new Set(["draft_message"]);
+const AUTO_RESOLVE = new Set(["draft_message", "query_care_data"]);
 
 function visitLabel(visit) {
   if (!visit) return "that visit";
@@ -33,6 +34,8 @@ function describeToolCall(toolCall, visits) {
       return "Publish the current rota so every carer's phone updates?";
     case "resolve_carer_request":
       return `${a.resolution === "approved" ? "Approve" : "Decline"} this carer request?`;
+    case "query_care_data":
+      return "Look up live care data from the CareOS database?";
     default:
       return `Run ${toolCall.name.replaceAll("_", " ")}?`;
   }
@@ -111,6 +114,9 @@ export default function ManagerAssistant() {
         }
         case "draft_message": {
           return "Draft shown to the manager above — nothing was sent.";
+        }
+        case "query_care_data": {
+          return await executeCareDataQuery(a, { clientNameById: (id) => clientById(id)?.name });
         }
         default:
           throw new Error(`Unknown tool: ${toolCall.name}`);

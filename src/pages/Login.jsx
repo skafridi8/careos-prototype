@@ -6,14 +6,18 @@ import { TextField, SelectField } from "../components/ui/form/Field";
 import { SubmitButton, FormBanner } from "../components/ui/form/FormStatus";
 
 export default function Login() {
-  const { user, loading, signIn, signUp } = useAuth();
+  const { user, loading, profile, signIn, signUp } = useAuth();
   const [mode, setMode] = useState("signin");
   const [form, setForm] = useState({ email: "", password: "", fullName: "", role: "carer" });
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState(null);
 
   if (loading) return null;
-  if (user) return <Navigate to="/app/records" replace />;
+  if (user) {
+    // Wait for the profile so family accounts land in their portal, not the staff app.
+    if (!profile) return null;
+    return <Navigate to={profile.role === "family" ? "/family" : "/app/records"} replace />;
+  }
 
   function update(field) {
     return (e) => setForm((f) => ({ ...f, [field]: e.target.value }));

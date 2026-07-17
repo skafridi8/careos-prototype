@@ -5,6 +5,7 @@ import { clients, careSettingMeta } from "../../data/clients";
 import Avatar from "../../components/ui/Avatar";
 import Badge from "../../components/ui/Badge";
 import Card from "../../components/ui/Card";
+import InsightsFeed from "../../components/insights/InsightsFeed";
 
 const filters = [
   { id: "all", label: "All settings" },
@@ -46,6 +47,8 @@ export default function ClientList() {
           <ArrowRight size={13} />
         </span>
       </Link>
+
+      <InsightsFeed />
 
       <div className="flex flex-wrap gap-2">
         {filters.map((f) => (

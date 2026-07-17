@@ -7,6 +7,8 @@ import Avatar from "../../components/ui/Avatar";
 import Badge from "../../components/ui/Badge";
 import Card from "../../components/ui/Card";
 import GpConnectPanel from "../../components/shared/GpConnectPanel";
+import RiskInsightsPanel from "../../components/insights/RiskInsightsPanel";
+import FamilySharingPanel from "../../components/family/FamilySharingPanel";
 import { formatDayLabel, formatTime } from "../../utils/dates";
 
 const riskColor = { High: "rose", Medium: "amber", Low: "sage" };
@@ -50,6 +52,8 @@ export default function ClientDetail() {
 
       <div className="flex flex-wrap gap-5">
         <div className="flex min-w-0 flex-[2] basis-[480px] flex-col gap-5">
+          <RiskInsightsPanel clientId={client.id} clientName={client.preferredName ?? client.name} />
+
           <Card>
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-brand-900/40">Key needs</h2>
             <ul className="flex flex-col gap-1.5 text-sm text-brand-900/80">
@@ -148,6 +152,8 @@ export default function ClientDetail() {
               )}
             </div>
           </Card>
+
+          <FamilySharingPanel clientId={client.id} />
 
           <Card className="bg-sage-50">
             <h2 className="mb-1 text-sm font-semibold text-sage-800">Care plan status</h2>

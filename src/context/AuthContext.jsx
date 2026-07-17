@@ -58,6 +58,7 @@ export function AuthProvider({ children }) {
     profile,
     profileLoading,
     isManager: profile?.role === "manager",
+    isFamily: profile?.role === "family",
     loading: session === undefined,
     signUp,
     signIn,
