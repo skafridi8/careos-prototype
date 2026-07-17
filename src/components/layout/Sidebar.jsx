@@ -9,6 +9,7 @@ import {
   UserPlus,
   Clock3,
   Database,
+  BarChart3,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useRoster } from "../../context/RosterContext";
@@ -17,6 +18,7 @@ const navItems = [
   { to: "/app/clients", label: "Care Planning", icon: ClipboardList, managerOnly: true },
   { to: "/app/ai", label: "AI Care Notes", icon: Sparkles, accent: true, managerOnly: true, badgeKey: "ai" },
   { to: "/app/roster", label: "Rostering", icon: CalendarClock, managerOnly: true, badgeKey: "roster" },
+  { to: "/app/analytics", label: "Analytics", icon: BarChart3, managerOnly: true },
   { to: "/app/compliance", label: "Compliance", carerLabel: "My Compliance", icon: ShieldCheck },
 ];
 
