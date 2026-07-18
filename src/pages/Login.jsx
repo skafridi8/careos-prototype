@@ -42,14 +42,16 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center bg-brand-50/40 p-6">
+    <div className="flex min-h-svh items-center justify-center p-6">
       <div className="w-full max-w-sm">
-        <div className="mb-6 flex items-center justify-center gap-2">
-          <HeartPulse size={24} className="text-brand-500" />
-          <span className="text-xl font-semibold text-brand-950">CareOS</span>
+        <div className="mb-6 flex items-center justify-center gap-2.5">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-sage-600 text-white shadow-lift">
+            <HeartPulse size={21} />
+          </span>
+          <span className="text-2xl font-bold tracking-tight text-brand-950">tendly</span>
         </div>
 
-        <div className="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-brand-100/70 bg-white/90 p-6 shadow-pop backdrop-blur-sm">
           <div className="mb-5 flex rounded-lg bg-brand-50 p-1 text-sm font-medium">
             {["signin", "signup"].map((m) => (
               <button
@@ -84,7 +86,7 @@ export default function Login() {
               required
               value={form.email}
               onChange={update("email")}
-              placeholder="you@careos.com"
+              placeholder="you@tendly.com"
             />
             <TextField
               label="Password"

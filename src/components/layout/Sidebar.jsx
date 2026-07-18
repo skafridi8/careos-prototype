@@ -41,10 +41,12 @@ export default function Sidebar() {
     : {};
 
   return (
-    <aside className="flex w-60 shrink-0 flex-col gap-6 border-r border-brand-100 bg-white/70 p-5">
-      <div className="flex items-center gap-2 px-1">
-        <HeartPulse size={22} className="text-brand-500" />
-        <span className="text-lg font-semibold text-brand-950">CareOS</span>
+    <aside className="flex w-60 shrink-0 flex-col gap-6 border-r border-brand-100/70 bg-white/55 p-5 backdrop-blur-md">
+      <div className="flex items-center gap-2.5 px-1">
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-sage-600 text-white shadow-card">
+          <HeartPulse size={19} />
+        </span>
+        <span className="text-[19px] font-bold tracking-tight text-brand-950">tendly</span>
       </div>
       <nav className="flex flex-col gap-1">
         {visibleNavItems.map(({ to, label, carerLabel, icon: Icon, accent, badgeKey }) => {
@@ -54,14 +56,14 @@ export default function Sidebar() {
               key={to}
               to={to}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+                `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                   isActive
                     ? accent
-                      ? "bg-amber-100 text-amber-800"
-                      : "bg-brand-100 text-brand-800"
+                      ? "bg-white text-amber-700 shadow-card ring-1 ring-amber-200/70"
+                      : "bg-white text-brand-800 shadow-card ring-1 ring-brand-100"
                     : accent
-                      ? "text-amber-700 hover:bg-amber-50"
-                      : "text-brand-900/60 hover:bg-brand-50"
+                      ? "text-amber-700/80 hover:bg-amber-50/70 hover:text-amber-700"
+                      : "text-brand-900/55 hover:bg-white/70 hover:text-brand-900/80"
                 }`
               }
             >
@@ -91,8 +93,10 @@ export default function Sidebar() {
               key={to}
               to={to}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-                  isActive ? "bg-brand-100 text-brand-800" : "text-brand-900/60 hover:bg-brand-50"
+                `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+                  isActive
+                    ? "bg-white text-brand-800 shadow-card ring-1 ring-brand-100"
+                    : "text-brand-900/55 hover:bg-white/70 hover:text-brand-900/80"
                 }`
               }
             >
@@ -103,7 +107,7 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      <div className="mt-auto rounded-xl bg-sage-50 p-3 text-xs text-sage-700">
+      <div className="mt-auto rounded-xl bg-gradient-to-br from-sage-50 to-brand-50 p-3 text-xs leading-relaxed text-sage-700 ring-1 ring-sage-100">
         {isManager
           ? "One shared record across care planning, rostering & compliance."
           : "Your schedule, notes and requests all sync from your mobile app."}

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: "Inter", -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
 
   /* soft blue — primary brand */
   --color-brand-50: #f0f6fd;
@@ -14,6 +14,7 @@
   --color-brand-700: #26538e;
   --color-brand-800: #234674;
   --color-brand-900: #213b61;
+  --color-brand-950: #16263f;
 
   /* soft sage green — secondary / positive */
   --color-sage-50: #f1f7f3;
@@ -34,6 +35,9 @@
   --color-amber-300: #ebb768;
   --color-amber-400: #e19b3d;
   --color-amber-500: #c97f27;
+  --color-amber-600: #a96520;
+  --color-amber-700: #874f1c;
+  --color-amber-800: #6e401c;
 
   /* soft rose — risk / negative */
   --color-rose-50: #fdf1f1;
@@ -42,9 +46,15 @@
   --color-rose-300: #ea9497;
   --color-rose-400: #dd6d70;
   --color-rose-500: #c74d51;
+  --color-rose-600: #a83a3e;
 
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
+
+  /* layered elevation — soft, tinted with the brand navy */
+  --shadow-card: 0 1px 2px rgb(22 38 63 / 0.04), 0 4px 16px -6px rgb(22 38 63 / 0.08);
+  --shadow-lift: 0 2px 4px rgb(22 38 63 / 0.05), 0 12px 28px -8px rgb(22 38 63 / 0.14);
+  --shadow-pop: 0 4px 8px rgb(22 38 63 / 0.05), 0 24px 48px -12px rgb(22 38 63 / 0.18);
 }
 
 :root {
@@ -53,8 +63,24 @@
 
 body {
   margin: 0;
-  background: var(--color-brand-50);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  background-color: var(--color-brand-50);
+  background-image:
+    radial-gradient(1100px 500px at 85% -10%, rgb(58 132 209 / 0.09), transparent 60%),
+    radial-gradient(900px 450px at -10% 105%, rgb(79 137 101 / 0.08), transparent 60%),
+    linear-gradient(180deg, #f4f8fd 0%, #eef4fb 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.022em;
+}
+
+::selection {
+  background: var(--color-brand-200);
+  color: var(--color-brand-950);
 }
 
 #root {
@@ -63,4 +89,20 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+/* slim, unobtrusive scrollbars to match the soft chrome */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgb(33 59 97 / 0.14);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgb(33 59 97 / 0.24);
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
 }

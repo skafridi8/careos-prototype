@@ -35,7 +35,7 @@ function describeToolCall(toolCall, visits) {
     case "resolve_carer_request":
       return `${a.resolution === "approved" ? "Approve" : "Decline"} this carer request?`;
     case "query_care_data":
-      return "Look up live care data from the CareOS database?";
+      return "Look up live care data from the Tendly database?";
     default:
       return `Run ${toolCall.name.replaceAll("_", " ")}?`;
   }

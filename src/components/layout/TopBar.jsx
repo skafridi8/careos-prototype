@@ -7,10 +7,10 @@ export default function TopBar() {
   const { profile, isManager, signOut } = useAuth();
 
   return (
-    <header className="flex items-center justify-between border-b border-brand-100 bg-white/80 px-6 py-3">
+    <header className="z-10 flex items-center justify-between border-b border-brand-100/70 bg-white/60 px-6 py-3 shadow-[0_1px_0_rgb(255_255_255/0.6)_inset] backdrop-blur-md">
       <Link to="/" className="flex items-center gap-1.5 text-sm font-medium text-brand-900/50 hover:text-brand-700">
         <ArrowLeft size={15} />
-        Why CareOS
+        Why Tendly
       </Link>
       <div className="flex items-center gap-4">
         <ViewModeToggle />

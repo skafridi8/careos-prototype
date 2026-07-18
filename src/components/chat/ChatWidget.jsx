@@ -74,8 +74,8 @@ export default function ChatWidget({
   onExecuteTool, // async (toolCall) => resultText string
   autoResolveTool, // (toolName) => boolean — tools that don't need a confirm click (e.g. draft_message)
   describeToolCall, // (toolCall) => human-readable string for the confirm card
-  greeting = "Hi! I'm the CareOS assistant. Ask me anything about care planning, rostering, compliance, or your account.",
-  title = "CareOS Assistant",
+  greeting = "Hi! I'm the Tendly assistant. Ask me anything about care planning, rostering, compliance, or your account.",
+  title = "Tendly Assistant",
   placeholder,
   variant = "widget", // 'widget' (floating FAB) | 'inline' (embedded panel, e.g. phone frame)
 }) {
@@ -202,7 +202,7 @@ export default function ChatWidget({
       }
     >
       {variant === "widget" && (
-        <div className="flex items-center justify-between bg-brand-500 px-4 py-3 text-white">
+        <div className="flex items-center justify-between bg-gradient-to-r from-brand-600 to-brand-400 px-4 py-3 text-white">
           <div className="flex items-center gap-2">
             <HeartPulse size={18} />
             <span className="text-sm font-semibold">{title}</span>
@@ -258,7 +258,7 @@ export default function ChatWidget({
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={placeholder ?? (user ? "Ask about using CareOS…" : "Ask about CareOS…")}
+          placeholder={placeholder ?? (user ? "Ask about using Tendly…" : "Ask about Tendly…")}
           className="w-full rounded-lg border border-brand-200 bg-white px-3 py-2 text-sm text-brand-950 outline-none transition placeholder:text-brand-900/30 focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
         />
         <button

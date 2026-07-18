@@ -125,8 +125,10 @@ export default function FamilyPortal() {
       <header className="border-b border-brand-100 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-3.5">
           <div className="flex items-center gap-2">
-            <HeartPulse size={20} className="text-brand-500" />
-            <span className="font-semibold text-brand-950">CareOS</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-sage-600 text-white shadow-card">
+              <HeartPulse size={16} />
+            </span>
+            <span className="font-bold tracking-tight text-brand-950">tendly</span>
             <Badge color="sage">Family Portal</Badge>
           </div>
           <div className="flex items-center gap-3">

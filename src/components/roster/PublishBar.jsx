@@ -12,7 +12,7 @@ export default function PublishBar() {
   function handlePublish() {
     publish();
     setReviewOpen(false);
-    showToast("Rota published — 6 carers notified on the CareOS mobile app ✓", "sage");
+    showToast("Rota published — 6 carers notified on the Tendly mobile app ✓", "sage");
   }
 
   return (

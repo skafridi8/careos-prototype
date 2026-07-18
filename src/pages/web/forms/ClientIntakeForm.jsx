@@ -202,7 +202,7 @@ export default function ClientIntakeForm() {
           <TextAreaField label="Additional notes" hint="optional" value={form.notes} onChange={update("notes")} />
 
           <CheckboxField
-            label="Client (or their representative) has consented to CareOS processing this data for care coordination purposes."
+            label="Client (or their representative) has consented to Tendly processing this data for care coordination purposes."
             checked={form.consent_data_processing}
             onChange={(e) => setForm((f) => ({ ...f, consent_data_processing: e.target.checked }))}
           />

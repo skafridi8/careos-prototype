@@ -5,7 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import AppShell from "./components/layout/AppShell";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import RequireManager from "./components/layout/RequireManager";
-import WhyCareOS from "./pages/WhyCareOS";
+import WhyTendly from "./pages/WhyTendly";
 import Login from "./pages/Login";
 import Subscribe from "./pages/Subscribe";
 import SubscribeSuccess from "./pages/SubscribeSuccess";
@@ -58,7 +58,7 @@ export default function App() {
       <AuthProvider>
         <ViewModeProvider>
           <Routes>
-            <Route path="/" element={<WhyCareOS />} />
+            <Route path="/" element={<WhyTendly />} />
             <Route path="/login" element={<Login />} />
             <Route path="/subscribe" element={<Subscribe />} />
             <Route path="/subscribe/success" element={<SubscribeSuccess />} />

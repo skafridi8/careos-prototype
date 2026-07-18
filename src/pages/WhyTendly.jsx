@@ -10,28 +10,32 @@ const legend = [
   { status: "unclear", label: "Unclear" },
 ];
 
-export default function WhyCareOS() {
+export default function WhyTendly() {
   return (
-    <div className="min-h-svh bg-gradient-to-b from-brand-50 to-sage-50">
+    <div className="min-h-svh">
       <div className="mx-auto max-w-6xl px-6 py-14">
         <header className="flex flex-col items-center text-center gap-4">
-          <div className="flex items-center gap-2 rounded-full bg-white px-4 py-1.5 shadow-sm">
-            <HeartPulse size={18} className="text-brand-500" />
-            <span className="text-sm font-semibold tracking-wide text-brand-700">CareOS</span>
+          <div className="flex items-center gap-2 rounded-full bg-white/90 py-1.5 pl-1.5 pr-4 shadow-card ring-1 ring-brand-100/70 backdrop-blur-sm">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-sage-600 text-white">
+              <HeartPulse size={15} />
+            </span>
+            <span className="text-sm font-bold tracking-tight text-brand-800">tendly</span>
           </div>
-          <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-brand-950 sm:text-5xl">
+          <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-brand-950 sm:text-5xl">
             Everyone else sells three products.
             <br />
-            <span className="text-brand-500">We built one shared record.</span>
+            <span className="bg-gradient-to-r from-brand-500 to-sage-600 bg-clip-text text-transparent">
+              We built one shared record.
+            </span>
           </h1>
           <p className="max-w-2xl text-lg text-brand-900/60">
             Care planning, rostering and compliance are usually separate, disconnected tools —
-            each with its own known gaps. CareOS is one data model behind all three views, so a
+            each with its own known gaps. Tendly is one data model behind all three views, so a
             note a carer writes at 8am is already informing the compliance dashboard by 8:01.
           </p>
         </header>
 
-        <section className="mt-12 overflow-x-auto rounded-2xl bg-white shadow-md">
+        <section className="mt-12 overflow-x-auto rounded-2xl bg-white/95 shadow-pop ring-1 ring-brand-100/70 backdrop-blur-sm">
           <table className="w-full min-w-[720px] border-collapse text-sm">
             <thead>
               <tr>
@@ -42,7 +46,7 @@ export default function WhyCareOS() {
                   <th
                     key={c.id}
                     className={
-                      c.id === "careos"
+                      c.id === "tendly"
                         ? "rounded-t-xl bg-brand-600 p-5 text-center text-base font-semibold text-white"
                         : "p-5 text-center text-base font-semibold text-brand-900/70"
                     }
@@ -75,7 +79,7 @@ export default function WhyCareOS() {
                       <td
                         key={c.id}
                         className={
-                          c.id === "careos"
+                          c.id === "tendly"
                             ? "bg-brand-50/70 p-5 text-center align-top"
                             : "p-5 text-center align-top"
                         }
@@ -110,7 +114,7 @@ export default function WhyCareOS() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/app"
-              className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-7 py-3.5 text-base font-semibold text-white shadow-md transition hover:bg-brand-700"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-brand-600 to-brand-500 px-7 py-3.5 text-base font-semibold text-white shadow-lift transition hover:shadow-pop hover:brightness-105"
             >
               Enter the prototype
               <ArrowRight size={18} />

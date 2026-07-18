@@ -58,7 +58,7 @@ export default function AiAssistant() {
         </div>
         <p className="mt-2 max-w-2xl text-sm text-brand-900/50">
           Turn a carer's free-text notes into a structured, editable care plan — instantly. Pick any client below and
-          watch it happen. This is the capability that sets CareOS apart.
+          watch it happen. This is the capability that sets Tendly apart.
         </p>
       </div>
 
@@ -124,7 +124,7 @@ export default function AiAssistant() {
               </div>
             ) : (
               <p className="text-sm text-brand-900/55">
-                CareOS has been logging {client.preferredName}'s visit notes, medication records and welfare checks all
+                Tendly has been logging {client.preferredName}'s visit notes, medication records and welfare checks all
                 week. The AI reads all of it — click generate to turn that activity into a structured care plan draft.
               </p>
             )}

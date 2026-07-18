@@ -1,4 +1,4 @@
-# CareOS Prototype — Tech Stack
+# Tendly Prototype — Tech Stack
 
 ## Core
 - **React 19** + **React Router 7** (client-side routing) — plain JS/JSX, no TypeScript (the `@types/react*` packages are only for editor intellisense)

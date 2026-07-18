@@ -72,8 +72,10 @@ export default function Subscribe() {
       <div className="mx-auto max-w-4xl">
         <div className="flex flex-col items-center text-center gap-3">
           <Link to="/" className="flex items-center gap-2">
-            <HeartPulse size={20} className="text-brand-500" />
-            <span className="text-sm font-semibold tracking-wide text-brand-700">CareOS</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-sage-600 text-white">
+              <HeartPulse size={15} />
+            </span>
+            <span className="text-sm font-bold tracking-tight text-brand-800">tendly</span>
           </Link>
           <h1 className="text-3xl font-semibold text-brand-950 sm:text-4xl">Subscribe your agency</h1>
           <p className="max-w-xl text-brand-900/60">

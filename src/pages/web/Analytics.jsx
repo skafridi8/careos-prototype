@@ -72,7 +72,7 @@ function UpgradePrompt() {
       <div className="text-lg font-semibold text-brand-950">Advanced analytics is a premium feature</div>
       <p className="max-w-md text-sm text-brand-900/60">
         Unlock 90-day care quality trends, staff punctuality and workload analytics, and AI risk
-        insights across your whole client base with a CareOS subscription.
+        insights across your whole client base with a Tendly subscription.
       </p>
       <Link
         to="/subscribe"
