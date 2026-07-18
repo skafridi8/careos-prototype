@@ -25,6 +25,8 @@
 - `src/components/mobile/*` — simulated mobile app rendered inside a `PhoneFrame` component, toggled via `ViewModeContext`
 - `src/pages/family/FamilyPortal.jsx` + `src/components/family/*` + `src/lib/familyApi.js` — family-facing portal (`/family`, own `family` role) with live visit status + two-way messaging over Supabase Realtime; manager-side sharing toggles and thread on ClientDetail
 - `src/components/insights/*` + `src/lib/careData.js` + `api/insights/generate.js` — AI care insights: Groq analyses `care_notes` into `care_insights` rows, weighted `risk_scores`, chatbot `query_care_data` tool
+- `src/pages/web/Analytics.jsx` + `src/lib/analyticsApi.js` — premium analytics from the Postgres views, gated on `customer_subscriptions`
+- `src/pages/web/LiveVisits.jsx` + `src/lib/visitLogsApi.js` + `src/components/mobile/GpsCheckInCard.jsx` — GPS check-in/out from the carer phone into `visit_logs`, live who's-where board over Realtime, continuity/proximity stats feeding `suggestCarers`
 - `src/components/roster/*` + `src/context/RosterContext.jsx` + `src/utils/rosterEngine.js` — rostering engine/state shared between web and mobile views
 - `src/data/*` — static mock/seed data (clients, carers, visits, compliance, etc.) still used by Care Planning/Roster/Compliance screens
 

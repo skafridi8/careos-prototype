@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { AlertTriangle, Clock3, MapPin, Sparkles, Users, X } from "lucide-react";
 import Avatar from "../ui/Avatar";
 import Badge from "../ui/Badge";
@@ -7,6 +8,7 @@ import { statusMeta } from "../../data/visits";
 import { skillLabel } from "../../data/rostering";
 import { useRoster } from "../../context/RosterContext";
 import { suggestCarers, visitZone } from "../../utils/rosterEngine";
+import { fetchLiveSuggestionStats } from "../../lib/visitLogsApi";
 import { formatDayLabel, formatTime } from "../../utils/dates";
 
 const reasonTone = {
@@ -17,6 +19,14 @@ const reasonTone = {
 
 export default function VisitDrawer() {
   const { selectedVisit: visit, closeVisit, visits, sickCarerIds, analysis, assignCarer, unassignCarer, showToast } = useRoster();
+  // 30-day GPS continuity/proximity stats from Supabase, folded into the
+  // suggestion ranking. Loaded once; suggestions still work without it.
+  const [liveStats, setLiveStats] = useState(null);
+  useEffect(() => {
+    fetchLiveSuggestionStats()
+      .then(setLiveStats)
+      .catch((err) => console.warn("Live suggestion stats unavailable:", err.message));
+  }, []);
   if (!visit) return null;
 
   const client = clientById(visit.clientId);
@@ -25,7 +35,7 @@ export default function VisitDrawer() {
   const editable = visit.status === "upcoming" || visit.status === "unallocated" || visit.status === "in-progress";
   const slots = visit.requiresTwo ? 2 : 1;
   const canAdd = editable && (visit.carerIds.length < slots || !visit.requiresTwo);
-  const suggestions = canAdd ? suggestCarers(visit, visits, sickCarerIds) : [];
+  const suggestions = canAdd ? suggestCarers(visit, visits, sickCarerIds, [], liveStats) : [];
 
   function handleAssign(carer, match) {
     assignCarer(visit.id, carer.id);

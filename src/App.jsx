@@ -17,6 +17,7 @@ import CarePlanEditor from "./pages/web/CarePlanEditor";
 import AiAssistant from "./pages/web/AiAssistant";
 import Roster from "./pages/web/Roster";
 import Analytics from "./pages/web/Analytics";
+import LiveVisits from "./pages/web/LiveVisits";
 import Compliance from "./pages/web/Compliance";
 import Records from "./pages/web/Records";
 import TrainingForm from "./pages/web/forms/TrainingForm";
@@ -80,6 +81,7 @@ export default function App() {
                   <Route path="ai" element={<AiAssistant />} />
                   <Route path="roster" element={<Roster />} />
                   <Route path="analytics" element={<Analytics />} />
+                  <Route path="live" element={<LiveVisits />} />
                   <Route path="forms/client-intake" element={<ClientIntakeForm />} />
                 </Route>
                 <Route path="compliance" element={<Compliance />} />

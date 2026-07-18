@@ -185,9 +185,21 @@ function familiarity(carerId, clientId, visits) {
   return visits.filter((v) => v.clientId === clientId && v.carerIds.includes(carerId)).length;
 }
 
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const toRad = (d) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(a));
+}
+
 // Ranked, explainable carer suggestions for a visit. Hard conflicts are
 // excluded entirely — the engine never suggests an unsafe match.
-export function suggestCarers(visit, visits, sickCarerIds = [], excludeIds = []) {
+// liveStats (optional) comes from fetchLiveSuggestionStats(): 30 days of
+// GPS-verified visit history + each carer's last known position, so the
+// ranking can also weigh real continuity and proximity from Supabase data.
+export function suggestCarers(visit, visits, sickCarerIds = [], excludeIds = [], liveStats = null) {
   const client = clientById(visit.clientId);
   const results = [];
 
@@ -240,6 +252,26 @@ export function suggestCarers(visit, visits, sickCarerIds = [], excludeIds = [])
       } else {
         score -= 10;
         reasons.push({ text: `${client.preferredName} prefers ${preferred} carers`, tone: "amber" });
+      }
+    }
+
+    if (liveStats) {
+      const count30 = liveStats.visits30d?.[carer.id]?.[visit.clientId] || 0;
+      if (count30 >= 10) {
+        score += 8;
+        reasons.push({ text: `Strong continuity — ${count30} GPS-verified visits in the last 30 days`, tone: "sage" });
+      } else if (count30 > 0) {
+        score += 3;
+        reasons.push({ text: `${count30} GPS-verified visit${count30 === 1 ? "" : "s"} in the last 30 days`, tone: "sage" });
+      }
+      const pos = liveStats.lastPosition?.[carer.id];
+      const home = liveStats.clientCoords?.[visit.clientId];
+      if (pos && home?.latitude != null) {
+        const km = haversineKm(pos.latitude, pos.longitude, home.latitude, home.longitude);
+        if (km <= 3) {
+          score += 6;
+          reasons.push({ text: `Nearby now — ${km.toFixed(1)} km away at last GPS fix`, tone: "sage" });
+        }
       }
     }
 

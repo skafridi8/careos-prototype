@@ -5,6 +5,7 @@ import { carerById } from "../../data/carers";
 import { formatTime } from "../../utils/dates";
 import Avatar from "../ui/Avatar";
 import Badge from "../ui/Badge";
+import GpsCheckInCard from "./GpsCheckInCard";
 
 function tasksForVisit(type) {
   if (type.includes("Double-Up")) return ["Both carers present for hoist transfer", "Personal care completed", "Reposition & check skin integrity"];
@@ -58,6 +59,8 @@ export default function MobileVisitDetail({ visit, status, currentCarerId, onBac
         <div className="text-sm font-semibold text-brand-950">{visit.type}</div>
         <div className="text-xs text-brand-900/50">{formatTime(visit.start)} – {formatTime(visit.end)}</div>
       </div>
+
+      <GpsCheckInCard visit={visit} currentCarerId={currentCarerId} />
 
       {visit.doubleUp && partner && (
         <div className="flex items-center gap-2 rounded-2xl bg-amber-50 p-3.5">
