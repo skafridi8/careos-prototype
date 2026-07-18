@@ -10,6 +10,7 @@ import { useRoster } from "../../context/RosterContext";
 import { suggestCarers, visitZone } from "../../utils/rosterEngine";
 import { fetchLiveSuggestionStats } from "../../lib/visitLogsApi";
 import { formatDayLabel, formatTime } from "../../utils/dates";
+import RoleTag from "../ui/RoleTag";
 
 const reasonTone = {
   sage: "bg-sage-50 text-sage-700",
@@ -131,7 +132,9 @@ export default function VisitDrawer() {
                   <div key={id} className="flex items-center gap-2.5 rounded-xl border border-brand-100 p-2.5">
                     <Avatar initials={carer.initials} color={carer.color} size="sm" />
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-medium text-brand-950">{carer.name}</div>
+                      <div className="flex items-center gap-1.5 truncate text-sm font-medium text-brand-950">
+                        {carer.name} <RoleTag role="carer" />
+                      </div>
                       <div className="text-[11px] text-brand-900/45">
                         {carer.role} · {carer.availabilityLabel}
                       </div>
@@ -175,7 +178,9 @@ export default function VisitDrawer() {
                         <Avatar initials={carer.initials} color={carer.color} size="sm" />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="truncate text-sm font-medium text-brand-950">{carer.name}</span>
+                            <span className="flex items-center gap-1.5 truncate text-sm font-medium text-brand-950">
+                              {carer.name} <RoleTag role="carer" />
+                            </span>
                             {idx === 0 && (
                               <span className="rounded-full bg-amber-400 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">
                                 Best match

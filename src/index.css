@@ -61,6 +61,65 @@
   color-scheme: light;
 }
 
+/* Dark theme: every utility in the app resolves through these variables, so
+   flipping the ramps here restyles the whole product. Mid-tone accents
+   (brand/sage 400-500, amber 300-500, rose 300-500) stay vivid; the light
+   ends become deep navy surfaces and the dark ends become light text.
+   --color-white becomes the card surface, which also turns "text-white on a
+   colored button" into dark-on-light — intentionally, since colored fills
+   are brighter in dark mode. */
+.dark {
+  color-scheme: dark;
+
+  --color-white: #161e2d;
+  --color-black: #f2f6fc;
+
+  --color-brand-50: #0d1420;
+  --color-brand-100: #1d2940;
+  --color-brand-200: #2c3e5e;
+  --color-brand-300: #3d567f;
+  --color-brand-400: #5da2e2;
+  --color-brand-500: #4f97dd;
+  --color-brand-600: #6cabe8;
+  --color-brand-700: #93c2ef;
+  --color-brand-800: #b8d6f5;
+  --color-brand-900: #d5e6f9;
+  --color-brand-950: #edf4fd;
+
+  --color-sage-50: #101a14;
+  --color-sage-100: #1e3026;
+  --color-sage-200: #2f4a3a;
+  --color-sage-300: #4a6d58;
+  --color-sage-400: #6da682;
+  --color-sage-500: #7cb391;
+  --color-sage-600: #8fc2a2;
+  --color-sage-700: #b2d6bf;
+  --color-sage-800: #cfe6d8;
+  --color-sage-900: #e2f0e8;
+
+  --color-amber-50: #201808;
+  --color-amber-100: #382a10;
+  --color-amber-200: #55401a;
+  --color-amber-300: #ebb768;
+  --color-amber-400: #e9a94f;
+  --color-amber-500: #eeb668;
+  --color-amber-600: #f2c684;
+  --color-amber-700: #f6d7a6;
+  --color-amber-800: #fae7c8;
+
+  --color-rose-50: #251114;
+  --color-rose-100: #3f1c20;
+  --color-rose-200: #5e2b30;
+  --color-rose-300: #ea9497;
+  --color-rose-400: #e58e91;
+  --color-rose-500: #ec9fa2;
+  --color-rose-600: #f3bcbe;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.35), 0 4px 16px -6px rgb(0 0 0 / 0.5);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.4), 0 12px 28px -8px rgb(0 0 0 / 0.6);
+  --shadow-pop: 0 4px 8px rgb(0 0 0 / 0.4), 0 24px 48px -12px rgb(0 0 0 / 0.65);
+}
+
 body {
   margin: 0;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
@@ -78,9 +137,24 @@ h1, h2, h3 {
   letter-spacing: -0.022em;
 }
 
+.dark body {
+  background-color: #0a0f19;
+  background-image:
+    radial-gradient(1100px 500px at 85% -10%, rgb(93 162 226 / 0.08), transparent 60%),
+    radial-gradient(900px 450px at -10% 105%, rgb(109 166 130 / 0.07), transparent 60%),
+    linear-gradient(180deg, #0c1220 0%, #0a0f19 100%);
+}
+
 ::selection {
   background: var(--color-brand-200);
   color: var(--color-brand-950);
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: rgb(147 194 239 / 0.18);
+}
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: rgb(147 194 239 / 0.3);
 }
 
 #root {

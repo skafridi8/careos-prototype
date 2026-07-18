@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { HeartPulse, LogOut, CalendarClock, MessageCircle, NotebookPen, Loader2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import ThemeToggle from "../../components/layout/ThemeToggle";
 import Badge from "../../components/ui/Badge";
 import Card from "../../components/ui/Card";
 import MessageThread from "../../components/family/MessageThread";
@@ -121,8 +122,8 @@ export default function FamilyPortal() {
   }
 
   return (
-    <div className="min-h-svh bg-brand-50/40">
-      <header className="border-b border-brand-100 bg-white">
+    <div className="min-h-svh">
+      <header className="border-b border-brand-100/70 bg-white/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-3.5">
           <div className="flex items-center gap-2">
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-sage-600 text-white shadow-card">
@@ -132,6 +133,7 @@ export default function FamilyPortal() {
             <Badge color="sage">Family Portal</Badge>
           </div>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <span className="hidden text-sm text-brand-900/50 sm:block">
               {profile?.full_name} · {link.relationship ?? "Family"} of {client.name}
             </span>

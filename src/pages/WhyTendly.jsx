@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, HeartPulse, Sparkles } from "lucide-react";
 import { competitors, comparisonRows } from "../data/comparisonData";
+import ThemeToggle from "../components/layout/ThemeToggle";
 import ComparisonIcon from "../components/ui/ComparisonIcon";
 
 const legend = [
@@ -12,8 +13,9 @@ const legend = [
 
 export default function WhyTendly() {
   return (
-    <div className="min-h-svh">
+    <div className="relative min-h-svh">
       <div className="mx-auto max-w-6xl px-6 py-14">
+        <div className="absolute right-5 top-5"><ThemeToggle /></div>
         <header className="flex flex-col items-center text-center gap-4">
           <div className="flex items-center gap-2 rounded-full bg-white/90 py-1.5 pl-1.5 pr-4 shadow-card ring-1 ring-brand-100/70 backdrop-blur-sm">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-sage-600 text-white">

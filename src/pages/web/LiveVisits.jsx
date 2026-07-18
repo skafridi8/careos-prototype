@@ -6,6 +6,7 @@ import Avatar from "../../components/ui/Avatar";
 import { carers, carerById } from "../../data/carers";
 import { clientById } from "../../data/clients";
 import { fetchTodaysLogs, subscribeToVisitLogInserts } from "../../lib/visitLogsApi";
+import RoleTag from "../../components/ui/RoleTag";
 import { timeAgo } from "../../lib/careData";
 
 function clock(iso) {
@@ -88,7 +89,9 @@ export default function LiveVisits() {
                 <div className="flex items-center gap-3">
                   <Avatar initials={carer.initials} color={carer.color} />
                   <div className="min-w-0">
-                    <div className="truncate font-semibold text-brand-950">{carer.name}</div>
+                    <div className="flex items-center gap-1.5 truncate font-semibold text-brand-950">
+                      {carer.name} <RoleTag role="carer" />
+                    </div>
                     <div className="text-xs text-brand-900/45">{carer.role}</div>
                   </div>
                 </div>

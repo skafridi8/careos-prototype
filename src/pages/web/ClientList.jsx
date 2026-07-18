@@ -5,6 +5,7 @@ import { clients, careSettingMeta } from "../../data/clients";
 import Avatar from "../../components/ui/Avatar";
 import Badge from "../../components/ui/Badge";
 import Card from "../../components/ui/Card";
+import RoleTag from "../../components/ui/RoleTag";
 import InsightsFeed from "../../components/insights/InsightsFeed";
 
 const filters = [
@@ -56,8 +57,10 @@ export default function ClientList() {
             key={f.id}
             type="button"
             onClick={() => setFilter(f.id)}
-            className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-              filter === f.id ? "bg-brand-600 text-white" : "bg-white text-brand-900/60 hover:bg-brand-100"
+            className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 ${
+              filter === f.id
+                ? "bg-gradient-to-r from-brand-600 to-brand-500 text-white shadow-card"
+                : "bg-white/80 text-brand-900/60 ring-1 ring-brand-100/70 hover:bg-white hover:shadow-card"
             }`}
           >
             {f.label}
@@ -74,7 +77,9 @@ export default function ClientList() {
                 <div className="flex items-center gap-3">
                   <Avatar initials={client.initials} color={client.avatarColor} size="lg" />
                   <div>
-                    <div className="font-semibold text-brand-950">{client.name}</div>
+                    <div className="flex items-center gap-1.5 font-semibold text-brand-950">
+                      {client.name} <RoleTag role="client" />
+                    </div>
                     <div className="text-xs text-brand-900/45">{client.age} years · {client.location}</div>
                   </div>
                 </div>

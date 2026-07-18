@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ViewModeProvider } from "./context/ViewModeContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import { RosterProvider } from "./context/RosterContext";
 import { AuthProvider } from "./context/AuthContext";
 import AppShell from "./components/layout/AppShell";
@@ -55,6 +56,7 @@ function FamilyRoute() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ThemeProvider>
       <AuthProvider>
         <ViewModeProvider>
           <Routes>
@@ -95,6 +97,7 @@ export default function App() {
           <PublicChatWidget />
         </ViewModeProvider>
       </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

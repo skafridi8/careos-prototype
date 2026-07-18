@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, LogOut } from "lucide-react";
 import ViewModeToggle from "./ViewModeToggle";
+import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "../../context/AuthContext";
 
 export default function TopBar() {
@@ -13,6 +14,7 @@ export default function TopBar() {
         Why Tendly
       </Link>
       <div className="flex items-center gap-4">
+        <ThemeToggle />
         <ViewModeToggle />
         {profile && (
           <div className="flex items-center gap-3 border-l border-brand-100 pl-4">

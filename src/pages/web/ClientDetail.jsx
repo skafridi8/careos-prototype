@@ -6,6 +6,7 @@ import { carerById } from "../../data/carers";
 import Avatar from "../../components/ui/Avatar";
 import Badge from "../../components/ui/Badge";
 import Card from "../../components/ui/Card";
+import RoleTag from "../../components/ui/RoleTag";
 import GpConnectPanel from "../../components/shared/GpConnectPanel";
 import RiskInsightsPanel from "../../components/insights/RiskInsightsPanel";
 import FamilySharingPanel from "../../components/family/FamilySharingPanel";
@@ -33,7 +34,9 @@ export default function ClientDetail() {
         <div className="flex min-w-0 items-center gap-4">
           <Avatar initials={client.initials} color={client.avatarColor} size="lg" />
           <div className="min-w-0">
-            <h1 className="text-2xl font-semibold text-brand-950">{client.name}</h1>
+            <h1 className="flex items-center gap-2 text-2xl font-semibold text-brand-950">
+              {client.name} <RoleTag role="client" />
+            </h1>
             <div className="mt-1 flex flex-wrap items-center gap-1.5">
               <Badge color={setting.color}>{setting.label}</Badge>
               <Badge color={riskColor[client.riskLevel]}>{client.riskLevel} risk</Badge>
