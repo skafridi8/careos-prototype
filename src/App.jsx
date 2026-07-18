@@ -45,10 +45,13 @@ function AppIndexRedirect() {
   return <Navigate to={isManager ? "clients" : "compliance"} replace />;
 }
 
-// The family portal is only for linked family accounts; staff get sent back to the app.
+// The family portal is only for linked family accounts: signed-out visitors go
+// to login (previously this rendered a blank page), staff go back to the app.
 function FamilyRoute() {
-  const { isFamily, profileLoading, profile } = useAuth();
-  if (profileLoading || !profile) return null;
+  const { user, loading, isFamily, profileLoading, profile } = useAuth();
+  if (loading || profileLoading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!profile) return null;
   if (!isFamily) return <Navigate to="/app" replace />;
   return <FamilyPortal />;
 }
