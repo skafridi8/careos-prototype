@@ -114,6 +114,24 @@ export async function fetchClientSharing(clientId) {
   return data;
 }
 
+// Manager only (enforced server-side): create a real family login for a
+// client and return the one-time password to share with them.
+export async function inviteFamilyMember({ clientId, fullName, email, relationship }) {
+  const { data } = await supabase.auth.getSession();
+  const token = data?.session?.access_token;
+  const res = await fetch("/api/family/invite", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ clientId, fullName, email, relationship }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || "Invite failed");
+  return body;
+}
+
 export async function fetchFamilyMembersForClient(clientId) {
   const { data, error } = await supabase
     .from("family_members")
